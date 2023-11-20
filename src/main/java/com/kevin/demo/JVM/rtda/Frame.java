@@ -13,19 +13,41 @@ public class Frame {
 
 
     // 操作数栈
-    OperandStack operandStack;
+    private OperandStack operandStack;
 
-    public Frame(int maxLocals, int maxStack) {
+    private Thread thread;
+
+    private int nextPC;
+
+    public Frame(Thread thread, int maxLocals, int maxStack) {
+        this.thread = thread;
         this.localVars = new LocalVars(maxLocals);
         this.operandStack = new OperandStack(maxStack);
     }
 
-    public LocalVars localVars(){
+    public Frame(int maxLocals,int maxStack) {
+        Frame frame = new Frame(thread, maxLocals, maxStack);
+        frame.lower = this;
+    }
+
+    public LocalVars localVars() {
         return localVars;
     }
 
-    public OperandStack operandStack(){
+    public OperandStack operandStack() {
         return operandStack;
+    }
+
+    public Thread thread() {
+        return this.thread;
+    }
+
+    public int nextPC() {
+        return this.nextPC;
+    }
+
+    public void setNextPC(int nextPC) {
+        this.nextPC = nextPC;
     }
 
 }
