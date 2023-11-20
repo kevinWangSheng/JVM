@@ -6,6 +6,9 @@ import com.kevin.demo.JVM.classpath.Classpath;
 import com.kevin.demo.JVM.rtda.Frame;
 import com.kevin.demo.JVM.rtda.LocalVars;
 import com.kevin.demo.JVM.rtda.OperandStack;
+import com.kevin.demo.JVM.rtda.heap.ClassLoader;
+import com.kevin.demo.JVM.rtda.heap.methodarea.Class;
+import com.kevin.demo.JVM.rtda.heap.methodarea.Method;
 
 /**
  * @author wang
@@ -94,15 +97,15 @@ public class Main {
 
     private static void startJVM(Cmd cmd) {
         Classpath classpath = new Classpath(cmd.jre, cmd.classpath);
-        System.out.printf("classpath:%s class:%s args:%s\n", classpath, cmd.getMainClass(), cmd.getAppArgs());
+        ClassLoader classLoader = new ClassLoader(classpath);
+        //获取className
         String className = cmd.getMainClass().replace(".", "/");
-        ClassFile classFile = loadClass(className, classpath);
-        MemberInfo mainMethod = getMainMethod(classFile);
+        Class mainClass = classLoader.loadClass(className);
+        Method mainMethod = mainClass.getMainMethod();
         if (null == mainMethod) {
-            System.out.println("Main method not found in class " + cmd.classpath);
-            return;
+            throw new RuntimeException("Main method not found in class " + cmd.getMainClass());
         }
-        new Interpret(mainMethod);
+        new Interpret(mainMethod, cmd.verboseClassFlag);
     }
 
     private static ClassFile loadClass(String className, Classpath cp) {

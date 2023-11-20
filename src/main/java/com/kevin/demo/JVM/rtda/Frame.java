@@ -1,5 +1,7 @@
 package com.kevin.demo.JVM.rtda;
 
+import com.kevin.demo.JVM.rtda.heap.methodarea.Method;
+
 /**栈帧
  * @author wang
  * @create 2023-11-19-22:56
@@ -18,16 +20,13 @@ public class Frame {
     private Thread thread;
 
     private int nextPC;
+    private Method method;
 
-    public Frame(Thread thread, int maxLocals, int maxStack) {
+    public Frame(Thread thread, Method method) {
         this.thread = thread;
-        this.localVars = new LocalVars(maxLocals);
-        this.operandStack = new OperandStack(maxStack);
-    }
-
-    public Frame(int maxLocals,int maxStack) {
-        Frame frame = new Frame(thread, maxLocals, maxStack);
-        frame.lower = this;
+        this.method = method;
+        this.localVars = new LocalVars(method.maxLocals);
+        this.operandStack = new OperandStack(method.maxStack);
     }
 
     public LocalVars localVars() {
@@ -42,6 +41,10 @@ public class Frame {
         return this.thread;
     }
 
+    public Method method(){
+        return this.method;
+    }
+
     public int nextPC() {
         return this.nextPC;
     }
@@ -49,5 +52,11 @@ public class Frame {
     public void setNextPC(int nextPC) {
         this.nextPC = nextPC;
     }
+
+    public void revertNextPC(){
+        this.nextPC = this.thread.pc();
+    }
+
+
 
 }

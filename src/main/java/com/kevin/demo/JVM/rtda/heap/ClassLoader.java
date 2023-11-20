@@ -81,7 +81,7 @@ public class ClassLoader {
                 case "C":
                 case "S":
                 case "I":
-                    Object val = constantPool.getConstants(cpIdx);
+                    java.lang.Object val = constantPool.getConstants(cpIdx);
                     staticVars.setInt(slotId, (Integer) val);
                 case "J":
                     staticVars.setLong(slotId, (Long) constantPool.getConstants(cpIdx));
@@ -160,6 +160,5 @@ public class ClassLoader {
         ClassFile classFile = new ClassFile(data);
         return new Class(classFile);
     }
-
 
 }

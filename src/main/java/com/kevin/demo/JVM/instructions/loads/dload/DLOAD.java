@@ -8,7 +8,7 @@ public class DLOAD extends InstructionIndex8 {
     @Override
     public void execute(Frame frame) {
         double val = frame.localVars().getDouble(this.idx);
-        frame.operandStack().pushRef(val);
+        frame.operandStack().pushDouble(val);
     }
 
 }

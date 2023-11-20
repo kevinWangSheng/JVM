@@ -1,5 +1,8 @@
 package com.kevin.demo.JVM.rtda;
 
+
+import com.kevin.demo.JVM.rtda.heap.methodarea.Object;
+
 /**操作数栈
  * @author wang
  * @create 2023-11-19-22:58
@@ -18,13 +21,13 @@ public class OperandStack {
     }
 
     public void pushInt(int val) {
-        slots[size].num = val;
-        size++;
+        this.slots[size].num = val;
+        this.size++;
     }
 
     public int popInt() {
-        size--;
-        return slots[size].num;
+        this.size--;
+        return this.slots[size].num;
     }
 
     public void pushFloat(float val) {
@@ -59,14 +62,14 @@ public class OperandStack {
     }
 
     public void pushRef(Object ref) {
-        slots[size].ref = ref;
-        size++;
+        this.slots[this.size].ref = ref;
+        this.size++;
     }
 
     public Object popRef() {
-        size--;
-        Object ref = slots[size].ref;
-        slots[size].ref = null;
+        this.size--;
+        Object ref = this.slots[size].ref;
+        this.slots[this.size].ref = null;
         return ref;
     }
 
@@ -75,9 +78,13 @@ public class OperandStack {
         this.size++;
     }
 
-    public Slot popSlot(){
-        this.size --;
+    public Slot popSlot() {
+        this.size--;
         return this.slots[this.size];
+    }
+
+    public Object getRefFromTop(int n) {
+        return this.slots[this.size - 1 - n].ref;
     }
 
     public Slot[] getSlots() {

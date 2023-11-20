@@ -54,7 +54,7 @@ public class Slots {
         this.slots[idx].ref = ref;
     }
 
-    public java.lang.Object getRef(int idx){
+    public Object getRef(int idx){
         return this.slots[idx].ref;
     }
 

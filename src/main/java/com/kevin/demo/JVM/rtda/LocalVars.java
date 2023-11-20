@@ -1,5 +1,7 @@
 package com.kevin.demo.JVM.rtda;
 
+import com.kevin.demo.JVM.rtda.heap.methodarea.Object;
+
 /** 局部变量
  * @author wang
  * @create 2023-11-19-22:57
@@ -45,14 +47,6 @@ public class LocalVars {
         return ((long) high << 32) | (long) low;
     }
 
-    public Slot[] getSlots() {
-        return slots;
-    }
-
-    public void setSlots(Slot[] slots) {
-        this.slots = slots;
-    }
-
     public void setDouble(int idx, double val) {
         setLong(idx, (long) val);
     }
@@ -69,4 +63,15 @@ public class LocalVars {
         return slots[idx].ref;
     }
 
+    public Slot[] getSlots() {
+        return slots;
+    }
+
+    public void setSlots(Slot[] slots) {
+        this.slots = slots;
+    }
+
+    public void setSlot(int idx, Slot slot) {
+        this.slots[idx] = slot;
+    }
 }

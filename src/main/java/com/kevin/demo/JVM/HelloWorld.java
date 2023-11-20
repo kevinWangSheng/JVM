@@ -6,10 +6,16 @@ package com.kevin.demo.JVM;
  */
 public class HelloWorld {
     public static void main(String[] args) {
-        int sum = 0;
-        for (int i = 1; i <= 100; i++) {
-            sum += i;
+        long x = fibonacci(10);
+        System.out.println(x);
+    }
+
+    //斐波那契数列（Fibonacci sequence）
+    private static long fibonacci(long n) {
+        if (n <= 1) {
+            return n;
+        } else {
+            return fibonacci(n - 1) + fibonacci(n - 2);
         }
-        System.out.println(sum);
     }
 }

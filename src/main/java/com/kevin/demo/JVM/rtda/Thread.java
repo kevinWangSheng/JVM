@@ -1,5 +1,7 @@
 package com.kevin.demo.JVM.rtda;
 
+import com.kevin.demo.JVM.rtda.heap.methodarea.Method;
+
 /**线程
  * @author wang
  * @create 2023-11-19-22:58
@@ -12,7 +14,7 @@ public class Thread {
     private JvmStack stack;
 
     public Thread() {
-        stack = new JvmStack(1024);
+        this.stack = new JvmStack(1024);
     }
 
     public int pc() {
@@ -35,7 +37,15 @@ public class Thread {
         return this.stack.top();
     }
 
-    public Frame newFrame(int maxLocals, int maxStack) {
-        return new Frame(this, maxLocals, maxStack);
+    public Frame topFrame(){
+        return this.stack.top();
+    }
+
+    public boolean isStackEmpty(){
+        return this.stack.isEmpty();
+    }
+
+    public Frame newFrame(Method method) {
+        return new Frame(this, method);
     }
 }

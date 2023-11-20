@@ -2,6 +2,7 @@ package com.kevin.demo.JVM.instructions.base;
 
 import com.kevin.demo.JVM.rtda.Frame;
 import com.kevin.demo.JVM.rtda.OperandStack;
+import com.kevin.demo.JVM.rtda.heap.methodarea.Object;
 
 /**
  * @author wang

@@ -2,6 +2,7 @@ package com.kevin.demo.JVM.instructions.loads.aload;
 
 import com.kevin.demo.JVM.instructions.base.InstructionNoOperands;
 import com.kevin.demo.JVM.rtda.Frame;
+import com.kevin.demo.JVM.rtda.heap.methodarea.Object;
 
 public class ALOAD_1 extends InstructionNoOperands {
 

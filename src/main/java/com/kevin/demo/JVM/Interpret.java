@@ -8,45 +8,57 @@ import com.kevin.demo.JVM.instructions.base.BytecodeReader;
 import com.kevin.demo.JVM.instructions.base.Instruction;
 import com.kevin.demo.JVM.rtda.Frame;
 import com.kevin.demo.JVM.rtda.Thread;
-
+import com.kevin.demo.JVM.rtda.heap.methodarea.Method;
 
 
 //指令集解释器
 class Interpret {
 
-    Interpret(MemberInfo m) {
-        CodeAttribute codeAttr = m.codeAttribute();
-        int maxLocals = codeAttr.maxLocals();
-        int maxStack = codeAttr.maxStack();
-        byte[] byteCode = codeAttr.data();
+    Interpret(Method method, boolean logInst) {
         Thread thread = new Thread();
-        Frame frame = thread.newFrame(maxLocals, maxStack);
+        Frame frame = thread.newFrame(method);
         thread.pushFrame(frame);
-        loop(thread, byteCode);
+
+        loop(thread, logInst);
     }
 
-    private void loop(Thread thread, byte[] byteCode) {
-        Frame frame = thread.popFrame();
+    private void loop(Thread thread, boolean logInst) {
         BytecodeReader reader = new BytecodeReader();
-
         while (true) {
-            //循环
+            Frame frame = thread.currentFrame();
             int pc = frame.nextPC();
             thread.setPC(pc);
-            //decode
-            reader.reset(byteCode, pc);
+
+            reader.reset(frame.method().code, pc);
             byte opcode = reader.readByte();
             Instruction inst = Factory.newInstruction(opcode);
             if (null == inst) {
-                System.out.println("寄存器(指令)尚未实现 " + byteToHexString(new byte[]{opcode}));
+                System.out.println("Unsupported opcode " + byteToHexString(new byte[]{opcode}));
                 break;
             }
             inst.fetchOperands(reader);
             frame.setNextPC(reader.pc());
-            System.out.println("寄存器(指令)：" + byteToHexString(new byte[]{opcode}) + " -> " + inst.getClass().getSimpleName() + " => 局部变量表：" + JSON.toJSONString(frame.localVars().getSlots()) + " 操作数栈：" + JSON.toJSONString(frame.operandStack().getSlots()));            //exec
-            inst.execute(frame);
-        }
 
+            if (logInst) {
+                logInstruction(frame, inst, opcode);
+            }
+
+            //exec
+            inst.execute(frame);
+
+            if (thread.isStackEmpty()) {
+                break;
+            }
+        }
+    }
+
+    private static void logInstruction(Frame frame, Instruction inst, byte opcode) {
+        Method method = frame.method();
+        String className = method.clazz().name();
+        String methodName = method.name();
+        String outStr = (className + "." + methodName + "() \t") +
+                "寄存器(指令)：" + byteToHexString(new byte[]{opcode}) + " -> " + inst.getClass().getSimpleName() + " => 局部变量表：" + JSON.toJSONString(frame.localVars().getSlots()) + " 操作数栈：" + JSON.toJSONString(frame.operandStack().getSlots());
+        System.out.println(outStr);
     }
 
     private static String byteToHexString(byte[] codes) {
