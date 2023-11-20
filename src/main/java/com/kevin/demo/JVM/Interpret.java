@@ -1,6 +1,7 @@
 package com.kevin.demo.JVM;
 
 import com.alibaba.fastjson2.JSON;
+import com.kevin.demo.JVM._native.Registry;
 import com.kevin.demo.JVM.classfile.MemberInfo;
 import com.kevin.demo.JVM.classfile.attributes.impl.CodeAttribute;
 import com.kevin.demo.JVM.instructions.Factory;
@@ -8,18 +9,40 @@ import com.kevin.demo.JVM.instructions.base.BytecodeReader;
 import com.kevin.demo.JVM.instructions.base.Instruction;
 import com.kevin.demo.JVM.rtda.Frame;
 import com.kevin.demo.JVM.rtda.Thread;
+import com.kevin.demo.JVM.rtda.heap.ClassLoader;
+import com.kevin.demo.JVM.rtda.heap.methodarea.Class;
 import com.kevin.demo.JVM.rtda.heap.methodarea.Method;
+import com.kevin.demo.JVM.rtda.heap.methodarea.Object;
+import com.kevin.demo.JVM.rtda.heap.methodarea.StringPool;
 
 
 //指令集解释器
 class Interpret {
 
-    Interpret(Method method, boolean logInst) {
+    Interpret(Method method, boolean logInst, String args) {
         Thread thread = new Thread();
         Frame frame = thread.newFrame(method);
         thread.pushFrame(frame);
 
+        if (null != args) {
+            Object jArgs = createArgsArray(method.clazz().loader(), args.split(" "));
+            frame.localVars().setRef(0, jArgs);
+        }
+
+        //初始化本地方法
+        Registry.initNative();
+
         loop(thread, logInst);
+    }
+
+    private Object createArgsArray(ClassLoader loader, String[] args) {
+        Class stringClass = loader.loadClass("java/lang/String");
+        Object argsArr = stringClass.arrayClass().newArray(args.length);
+        Object[] jArgs = argsArr.refs();
+        for (int i = 0; i < jArgs.length; i++) {
+            jArgs[i] = StringPool.jString(loader, args[i]);
+        }
+        return argsArr;
     }
 
     private void loop(Thread thread, boolean logInst) {

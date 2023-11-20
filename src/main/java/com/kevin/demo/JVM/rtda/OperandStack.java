@@ -98,4 +98,11 @@ public class OperandStack {
             this.pushInt(0);
         }
     }
+
+    public void clear() {
+        this.size = 0;
+        for (int i = 0; i < this.slots.length; i++) {
+            this.slots[i].ref = null;
+        }
+    }
 }

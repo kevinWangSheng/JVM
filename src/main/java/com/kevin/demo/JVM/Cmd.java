@@ -30,6 +30,9 @@ public class Cmd {
     @Parameter(description = "main class and args")
     List<String> mainClassAndArgs;
 
+    @Parameter(names = "-args", description = "ext in args", order = 6)
+    String args;
+
     boolean ok;
 
     @Parameter(names = "-Xjre", description = "path to jre", order = 4)

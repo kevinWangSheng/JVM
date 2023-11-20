@@ -49,4 +49,19 @@ public class JvmStack {
     public boolean isEmpty(){
         return this._top == null;
     }
+
+    public Frame[] getFrames() {
+        Frame[] frames = new Frame[this.size];
+        int i = 0;
+        for (Frame frame = this._top; frame != null; frame = frame.lower) {
+            frames[i++] = frame;
+        }
+        return frames;
+    }
+
+    public void clear(){
+        if (!this.isEmpty()){
+            this.pop();
+        }
+    }
 }

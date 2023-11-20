@@ -1,8 +1,8 @@
 package com.kevin.demo.JVM.classfile.attributes.impl;
 
 import com.kevin.demo.JVM.classfile.ClassReader;
-import com.kevin.demo.JVM.classfile.constant.ConstantPool;
 import com.kevin.demo.JVM.classfile.attributes.AttributeInfo;
+import com.kevin.demo.JVM.classfile.constant.ConstantPool;
 
 /**
  * http://www.itstack.org
@@ -25,7 +25,7 @@ public class CodeAttribute implements AttributeInfo {
     public void readInfo(ClassReader reader) {
         this.maxStack = reader.readUint16();
         this.maxLocals = reader.readUint16();
-        int dataLength = (int) reader.readUint32();
+        int dataLength = reader.readUint32TInteger();
         this.data = reader.readBytes(dataLength);
         this.exceptionTable = ExceptionTableEntry.readExceptionTable(reader);
         this.attributes = AttributeInfo.readAttributes(reader, this.constantPool);
@@ -47,11 +47,20 @@ public class CodeAttribute implements AttributeInfo {
         return this.exceptionTable;
     }
 
+    public LineNumberTableAttribute lineNumberTableAttribute() {
+        for (AttributeInfo attrInfo : this.attributes) {
+            if (attrInfo instanceof LineNumberTableAttribute) {
+                return (LineNumberTableAttribute) attrInfo;
+            }
+        }
+        return null;
+    }
+
     public AttributeInfo[] attributes() {
         return this.attributes;
     }
 
-    static class ExceptionTableEntry {
+    public static class ExceptionTableEntry {
 
         private int startPC;
         private int endPC;

@@ -95,6 +95,19 @@ public class Main {
 //    }
 
 
+//    private static void startJVM(Cmd cmd) {
+//        Classpath classpath = new Classpath(cmd.jre, cmd.classpath);
+//        ClassLoader classLoader = new ClassLoader(classpath);
+//        //获取className
+//        String className = cmd.getMainClass().replace(".", "/");
+//        Class mainClass = classLoader.loadClass(className);
+//        Method mainMethod = mainClass.getMainMethod();
+//        if (null == mainMethod) {
+//            throw new RuntimeException("Main method not found in class " + cmd.getMainClass());
+//        }
+//        new Interpret(mainMethod, cmd.verboseClassFlag);
+//    }
+
     private static void startJVM(Cmd cmd) {
         Classpath classpath = new Classpath(cmd.jre, cmd.classpath);
         ClassLoader classLoader = new ClassLoader(classpath);
@@ -105,7 +118,7 @@ public class Main {
         if (null == mainMethod) {
             throw new RuntimeException("Main method not found in class " + cmd.getMainClass());
         }
-        new Interpret(mainMethod, cmd.verboseClassFlag);
+        new Interpret(mainMethod, cmd.verboseClassFlag, cmd.args);
     }
 
     private static ClassFile loadClass(String className, Classpath cp) {

@@ -48,4 +48,12 @@ public class Thread {
     public Frame newFrame(Method method) {
         return new Frame(this, method);
     }
+
+    public Frame[] getFrames(){
+        return this.stack.getFrames();
+    }
+
+    public void clearStack(){
+        this.stack.clear();
+    }
 }

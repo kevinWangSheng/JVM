@@ -1,5 +1,7 @@
 package com.kevin.demo.JVM.rtda.heap.methodarea;
 
+import com.kevin.demo.JVM._native.java._Throwable;
+
 public class Object {
 
     Class clazz;
@@ -111,5 +113,9 @@ public class Object {
 
     public java.lang.Object extra() {
         return this.extra;
+    }
+
+    public void setExtra(_Throwable[] stes) {
+        this.extra = stes;
     }
 }

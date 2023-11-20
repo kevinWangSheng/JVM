@@ -16,6 +16,8 @@ public class Class {
     public Method[] methods;
     public ClassLoader loader;
     public Class superClass;
+
+    private String sourceFile;
     public Class[] interfaces;
     public int instanceSlotCount;
     public int staticSlotCount;
@@ -64,6 +66,10 @@ public class Class {
     }
     public ClassLoader loader() {
         return this.loader;
+    }
+
+    public String sourceFile(){
+        return this.sourceFile;
     }
 
     public Class arrayClass() {

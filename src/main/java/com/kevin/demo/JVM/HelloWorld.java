@@ -6,16 +6,19 @@ package com.kevin.demo.JVM;
  */
 public class HelloWorld {
     public static void main(String[] args) {
-        long x = fibonacci(10);
-        System.out.println(x);
-    }
-
-    //斐波那契数列（Fibonacci sequence）
-    private static long fibonacci(long n) {
-        if (n <= 1) {
-            return n;
-        } else {
-            return fibonacci(n - 1) + fibonacci(n - 2);
-        }
+        System.out.println(byte.class.getName()); // byte
+        System.out.println(void.class.getName()); // void
+        System.out.println(boolean.class.getName()); // boolean
+        System.out.println(char.class.getName()); // char
+        System.out.println(short.class.getName()); // short
+        System.out.println(int.class.getName()); // int
+        System.out.println(long.class.getName()); // long
+        System.out.println(float.class.getName()); // float
+        System.out.println(double.class.getName()); // double
+        System.out.println(Object.class.getName()); // java.lang.Object
+        System.out.println(int[].class.getName()); // [I
+        System.out.println(int[][].class.getName()); // [[I
+        System.out.println(Object[].class.getName()); // [Ljava.lang.Object;
+        System.out.println(Object[][].class.getName()); // [[Ljava.lang.Object;
     }
 }

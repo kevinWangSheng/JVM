@@ -2,6 +2,7 @@ package com.kevin.demo.JVM.rtda.heap.methodarea;
 
 import com.kevin.demo.JVM.classfile.MemberInfo;
 import com.kevin.demo.JVM.classfile.attributes.impl.CodeAttribute;
+import com.kevin.demo.JVM.classfile.attributes.impl.LineNumberTableAttribute;
 import com.kevin.demo.JVM.rtda.heap.constantpool.AccessFlags;
 
 import java.util.List;
@@ -11,18 +12,56 @@ public class Method extends ClassMember {
     public int maxStack;
     public int maxLocals;
     public byte[] code;
+    private ExceptionTable exceptionTable;
+    private LineNumberTableAttribute lineNumberTable;
     private int argSlotCount;
 
     Method[] newMethods(Class clazz, MemberInfo[] cfMethods) {
         Method[] methods = new Method[cfMethods.length];
         for (int i = 0; i < cfMethods.length; i++) {
-            methods[i] = new Method();
-            methods[i].clazz = clazz;
-            methods[i].copyMemberInfo(cfMethods[i]);
-            methods[i].copyAttributes(cfMethods[i]);
-            methods[i].calcArgSlotCount();
+            methods[i] = newMethod(clazz, cfMethods[i]);
         }
         return methods;
+    }
+
+    private Method newMethod(Class clazz, MemberInfo cfMethod) {
+        Method method = new Method();
+        method.clazz = clazz;
+        method.copyMemberInfo(cfMethod);
+        method.copyAttributes(cfMethod);
+        MethodDescriptor md = MethodDescriptorParser.parseMethodDescriptorParser(method.descriptor);
+        method.calcArgSlotCount(md.parameterTypes);
+        if (method.isNative()) {
+            method.injectCodeAttribute(md.returnType);
+        }
+        return method;
+    }
+
+    private void injectCodeAttribute(String returnType) {
+        this.maxStack = 4; //todo
+        this.maxLocals = this.argSlotCount;
+
+        switch (returnType.getBytes()[0]) {
+            case 'V':
+                this.code = new byte[]{(byte) 0xfe, (byte) 0xb1};
+                break;
+            case 'L':
+            case '[':
+                this.code = new byte[]{(byte) 0xfe, (byte) 0xb0};
+                break;
+            case 'D':
+                this.code = new byte[]{(byte) 0xfe, (byte) 0xaf};
+                break;
+            case 'F':
+                this.code = new byte[]{(byte) 0xfe, (byte) 0xae};
+                break;
+            case 'J':
+                this.code = new byte[]{(byte) 0xfe, (byte) 0xad};
+                break;
+            default:
+                this.code = new byte[]{(byte) 0xfe, (byte) 0xac};
+                break;
+        }
     }
 
     private void copyAttributes(MemberInfo cfMethod) {
@@ -31,12 +70,12 @@ public class Method extends ClassMember {
             this.maxStack = codeAttr.maxStack();
             this.maxLocals = codeAttr.maxLocals();
             this.code = codeAttr.data();
+            this.lineNumberTable = codeAttr.lineNumberTableAttribute();
+            this.exceptionTable = new ExceptionTable(codeAttr.exceptionTable(), this.clazz.constantPool());
         }
     }
 
-    private void calcArgSlotCount() {
-        MethodDescriptor parsedDescriptor = MethodDescriptorParser.parseMethodDescriptorParser(this.descriptor);
-        List<String> parameterTypes = parsedDescriptor.parameterTypes;
+    private void calcArgSlotCount(List<String> parameterTypes) {
         for (String paramType : parameterTypes) {
             this.argSlotCount++;
             if ("J".equals(paramType) || "D".equals(paramType)) {
@@ -86,6 +125,20 @@ public class Method extends ClassMember {
 
     public int argSlotCount() {
         return this.argSlotCount;
+    }
+
+    public int findExceptionHandler(Class exClass, int pc) {
+        ExceptionTable.ExceptionHandler handler = this.exceptionTable.findExceptionHandler(exClass, pc);
+        if (handler != null) {
+            return handler.handlerPC;
+        }
+        return -1;
+    }
+
+    public int getLineNumber(int pc) {
+        if (this.isNative()) return -2;
+        if (this.lineNumberTable == null) return -1;
+        return this.lineNumberTable.getLineNumber(pc);
     }
 
 }
