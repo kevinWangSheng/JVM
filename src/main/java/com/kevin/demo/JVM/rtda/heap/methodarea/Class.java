@@ -32,6 +32,45 @@ public class Class {
         this.methods = new Method().newMethods(this, classFile.methods());
     }
 
+    public ClassLoader loader() {
+        return this.loader;
+    }
+
+    public Class arrayClass() {
+        String arrayClassName = ClassNameHelper.getArrayClassName(this.name);
+        return this.loader.loadClass(arrayClassName);
+    }
+
+    public Field getField(String name, String descriptor, boolean isStatic) {
+        for (Class c = this; c != null; c = c.superClass) {
+            for (Field field : c.fields) {
+                if (field.isStatic() == isStatic &&
+                        field.name.equals(name) &&
+                        field.descriptor.equals(descriptor)) {
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isJlObject() {
+        return this.name.equals("java/lang/Object");
+    }
+
+    public boolean isJlCloneable() {
+        return this.name.equals("java/lang/Cloneable");
+    }
+
+    public boolean isJioSerializable() {
+        return this.name.endsWith("java/io/Serializable");
+    }
+
+    public Class componentClass() {
+        String componentClassName = ClassNameHelper.getComponentClassName(this.name);
+        return this.loader.loadClass(componentClassName);
+    }
+
     public boolean isPublic() {
         return 0 != (this.accessFlags & AccessFlags.ACC_PUBLIC);
     }
@@ -170,5 +209,36 @@ public class Class {
         }
         return false;
     }
+
+    public boolean isArray() {
+        return this.name.getBytes()[0] == '[';
+    }
+
+    public Object newArray(int count) {
+        if (!this.isArray()) {
+            throw new RuntimeException("Not array class " + this.name);
+        }
+        switch (this.name()) {
+            case "[Z":
+                return new Object(this, new byte[count]);
+            case "[B":
+                return new Object(this, new byte[count]);
+            case "[C":
+                return new Object(this, new char[count]);
+            case "[S":
+                return new Object(this, new short[count]);
+            case "[I":
+                return new Object(this, new int[count]);
+            case "[J":
+                return new Object(this, new long[count]);
+            case "[F":
+                return new Object(this, new float[count]);
+            case "[D":
+                return new Object(this, new double[count]);
+            default:
+                return new Object(this, new Object[count]);
+        }
+    }
+
 
 }
