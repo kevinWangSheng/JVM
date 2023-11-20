@@ -8,13 +8,13 @@ import com.kevin.demo.JVM.classfile.attributes.AttributeInfo;
  * @create 2023-11-18-21:50
  */
 public class ConstantValueAttribute implements AttributeInfo {
-    private int constantValueIdx;
+    int constantValueIdx;
     @Override
     public void readInfo(ClassReader reader) {
         this.constantValueIdx = reader.readUint16();
     }
 
-    public int getConstantValueIdx() {
+    public int constantValueIdx(){
         return this.constantValueIdx;
     }
 }

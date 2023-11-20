@@ -45,6 +45,14 @@ public class LocalVars {
         return ((long) high << 32) | (long) low;
     }
 
+    public Slot[] getSlots() {
+        return slots;
+    }
+
+    public void setSlots(Slot[] slots) {
+        this.slots = slots;
+    }
+
     public void setDouble(int idx, double val) {
         setLong(idx, (long) val);
     }

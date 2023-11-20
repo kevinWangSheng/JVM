@@ -5,7 +5,7 @@ package com.kevin.demo.JVM.rtda;
  * @create 2023-11-19-22:59
  */
 public class Slot {
-    int num;
+    public int num;
 
-    Object ref;
+    public Object ref;
 }
