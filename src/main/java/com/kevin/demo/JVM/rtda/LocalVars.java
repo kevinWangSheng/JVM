@@ -31,6 +31,10 @@ public class LocalVars {
         this.slots[idx].num = (Float.valueOf(val)).intValue();
     }
 
+    public Object getThis(){
+        return this.getRef(0);
+    }
+
     public Float getFloat(int idx) {
         int num = this.slots[idx].num;
         return (float) num;

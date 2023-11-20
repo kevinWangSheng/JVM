@@ -22,6 +22,8 @@ public class Class {
     public Slots staticVars;
     public boolean initStarted;
 
+    public Object jClass;
+
     public Class(ClassFile classFile) {
         this.accessFlags = classFile.accessFlags();
         this.name = classFile.className();
@@ -32,6 +34,34 @@ public class Class {
         this.methods = new Method().newMethods(this, classFile.methods());
     }
 
+    public Class(int accessFlags, String name, ClassLoader loader, boolean initStarted) {
+        this.accessFlags = accessFlags;
+        this.name = name;
+        this.loader = loader;
+        this.initStarted = initStarted;
+    }
+
+    public Class(int accessFlags, String name, ClassLoader loader, boolean initStarted, Class superClass, Class[] interfaces) {
+        this.accessFlags = accessFlags;
+        this.name = name;
+        this.loader = loader;
+        this.initStarted = initStarted;
+        this.superClass = superClass;
+        this.interfaces = interfaces;
+    }
+
+    public boolean IsPrimitive() {
+        return null != ClassNameHelper.primitiveTypes.get(this.name);
+    }
+
+    public Object getRefVar(String fieldName, String fieldDescriptor) {
+        Field field = this.getField(fieldName, fieldDescriptor, true);
+        return this.staticVars.getRef(field.slotId);
+    }
+
+    public Method getInstanceMethod(String name, String descriptor) {
+        return this.getStaticMethod(name, descriptor, false);
+    }
     public ClassLoader loader() {
         return this.loader;
     }
@@ -39,6 +69,10 @@ public class Class {
     public Class arrayClass() {
         String arrayClassName = ClassNameHelper.getArrayClassName(this.name);
         return this.loader.loadClass(arrayClassName);
+    }
+
+    public Object jClass() {
+        return this.jClass;
     }
 
     public Field getField(String name, String descriptor, boolean isStatic) {
@@ -69,6 +103,10 @@ public class Class {
     public Class componentClass() {
         String componentClassName = ClassNameHelper.getComponentClassName(this.name);
         return this.loader.loadClass(componentClassName);
+    }
+
+    public String javaName() {
+        return this.name.substring(0, 1) + this.name.substring(1).replace("/", ".");
     }
 
     public boolean isPublic() {
@@ -160,6 +198,18 @@ public class Class {
             }
         }
         return null;
+    }
+
+    private Method getStaticMethod(String name, String descriptor, boolean isStatic) {
+        for (Class c = this; c != null; c = c.superClass) {
+            if (null == c.methods) continue;
+            for (Method method : c.methods) {
+                if (method.isStatic() == isStatic && method.name.equals(name) && method.descriptor.equals(descriptor)) {
+                    return method;
+                }
+            }
+        }
+        throw new RuntimeException("method not find: " + name + " " + descriptor);
     }
 
     public Method getClinitMethod(){

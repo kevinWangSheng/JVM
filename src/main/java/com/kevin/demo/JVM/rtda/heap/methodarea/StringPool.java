@@ -13,8 +13,8 @@ public class StringPool {
 
     private static Map<String, Object> internedStrs = new HashMap<>();
 
-    public static java.lang.Object jString(ClassLoader loader, String goStr) {
-        java.lang.Object internedStr = internedStrs.get(goStr);
+    public static Object jString(ClassLoader loader, String goStr) {
+        Object internedStr = internedStrs.get(goStr);
         if (null != internedStr) return internedStr;
 
         char[] chars = goStr.toCharArray();
@@ -30,6 +30,15 @@ public class StringPool {
     public static String goString(Object jStr) {
         Object charArr = jStr.getRefVar("value", "[C");
         return new String(charArr.chars());
+    }
+
+    public static Object internString(Object jStr) {
+        String goStr = goString(jStr);
+        Object internedStr = internedStrs.get(goStr);
+        if (null != internedStr) return internedStr;
+
+        internedStrs.put(goStr, jStr);
+        return jStr;
     }
 
 }

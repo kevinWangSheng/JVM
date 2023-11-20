@@ -7,9 +7,9 @@ import java.util.Map;
  * http://www.itstack.org
  * create by fuzhengwei on 2019/4/29
  */
-class ClassNameHelper {
+public class ClassNameHelper {
 
-    static Map<String, String> primitiveTypes = new HashMap<String, String>() {
+    public static Map<String, String> primitiveTypes = new HashMap<String, String>() {
         {
             put("void", "V");
             put("boolean", "Z");

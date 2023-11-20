@@ -90,4 +90,12 @@ public class OperandStack {
     public Slot[] getSlots() {
         return slots;
     }
+
+    public void pushBoolean(boolean val) {
+        if (val) {
+            this.pushInt(1);
+        } else {
+            this.pushInt(0);
+        }
+    }
 }

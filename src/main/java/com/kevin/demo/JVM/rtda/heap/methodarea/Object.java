@@ -4,6 +4,7 @@ public class Object {
 
     Class clazz;
     java.lang.Object data;
+    public java.lang.Object extra;
 
     public Object(Class clazz) {
         this.clazz = clazz;
@@ -106,6 +107,9 @@ public class Object {
         }
 
         throw new RuntimeException("Not array");
+    }
 
+    public java.lang.Object extra() {
+        return this.extra;
     }
 }
