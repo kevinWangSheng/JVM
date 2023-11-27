@@ -30,7 +30,6 @@ public class JvmStack {
         if (this._top == null) {
             throw new RuntimeException("jvm stack is empty!");
         }
-
         Frame top = this._top;
         this._top = top.lower;
         top.lower = null;

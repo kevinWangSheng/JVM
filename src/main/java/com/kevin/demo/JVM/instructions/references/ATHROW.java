@@ -27,6 +27,7 @@ public class ATHROW extends InstructionNoOperands {
         }
     }
 
+
     private boolean findAndGotoExceptionHandler(Thread thread, Object ex) {
         do {
             Frame frame = thread.currentFrame();
@@ -45,6 +46,8 @@ public class ATHROW extends InstructionNoOperands {
         } while (!thread.isStackEmpty());
         return false;
     }
+
+
 
     private void handleUncaughtException(Thread thread, Object ex) {
         thread.clearStack();
